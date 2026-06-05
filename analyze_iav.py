@@ -1,3 +1,26 @@
+import argparse
+
+
+# Responsabilidad: guardar los argumentos de la línea de comandos en un objeto argpase para su uso posterior en el programa.
+# Entrada: Ninguna( los argumentos de la línea de comandos )
+# Salida: Objeto argparse con los argumentos de entrada y salida.
+def parse_arguments():
+    parser = argparse.ArgumentParser(
+        description="Analiza los resultados de DESeq2 para identificar genes con expresión diferencial."
+    )
+    parser.add_argument(
+        "input",
+        type=str,
+        help="Archivo TSV de entrada con los resultados de DESeq2 (obligatorio)",
+    )
+    parser.add_argument(
+        "output",
+        type=str,
+        help="Archivo TSV de salida para el resumen de genes (obligatorio)",
+    )
+    return parser.parse_args()
+
+
 # Responsabilidad:Evaluar si los genes cumplen con los criterios de significancia para le filtrado
 # Entrada:log2FoldChange, padj, lfc_threshold, padj_threshold
 # Salida:True o False
@@ -62,12 +85,12 @@ def load_deseq2_results(filename):
 
 
 # Responsabilidad: Filtrar genes significativos utilizando is_significant() y clasificar cada gen utilizando classify_gene().
-# Entrada: Lista de genes (gene_id, log2FoldChange, padj)
+# Entrada: Lista de genes (gene_id, log2FoldChange, padj), umbrales de significancia
 # Salida: Lista de genes filtrados con su clasificación.
-def filter_genes(genes):
+def filter_genes(genes, log2fc_threshold, padj_threshold):
     filtered_genes = []
     for gene_id, log2FoldChange, padj in genes:
-        if is_significant(log2FoldChange, padj):
+        if is_significant(log2FoldChange, padj, log2fc_threshold, padj_threshold):
             classification = classify_gene(log2FoldChange)
             filtered_genes.append((gene_id, log2FoldChange, padj, classification))
     return filtered_genes
@@ -103,10 +126,15 @@ def print_summary(filtered_genes):
 # Responsabilidad: Función principal que coordina: leer argumentos del usuario, definir umbrales,llamar load_deseq2_results(),llamar filter_genes(),llamar write_results(),llamar print_summary()
 # Entrada: file_path (ruta al archivo CSV), output_file_path (ruta al archivo de salida)
 # Salida: Ejecución del programa con resultados escritos en un archivo y resumen impreso en la consola.
-def main(filename, output_file_path):
-    genes = load_deseq2_results(filename)
-    filtered_genes = filter_genes(genes)
-    write_results(filtered_genes, output_file_path)
+def main():
+    # Definición de umbrales de significancia
+    log2fc_threshold = 1
+    padj_threshold = 0.05
+
+    args = parse_arguments()
+    genes = load_deseq2_results(args.input)
+    filtered_genes = filter_genes(genes, log2fc_threshold, padj_threshold)
+    write_results(filtered_genes, args.output)
     print_summary(filtered_genes)
 
 
