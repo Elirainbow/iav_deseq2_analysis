@@ -59,3 +59,15 @@ def load_deseq2_results(filename):
         print("Por favor, introduce una ruta válida para el archivo de entrada.")
         exit(1)
     return genes
+
+
+# Responsabilidad: Filtrar genes significativos utilizando is_significant() y clasificar cada gen utilizando classify_gene().
+# Entrada: Lista de genes (gene_id, log2FoldChange, padj)
+# Salida: Lista de genes filtrados con su clasificación.
+def filter_genes(genes):
+    filtered_genes = []
+    for gene_id, log2FoldChange, padj in genes:
+        if is_significant(log2FoldChange, padj):
+            classification = classify_gene(log2FoldChange)
+            filtered_genes.append((gene_id, log2FoldChange, padj, classification))
+    return filtered_genes
