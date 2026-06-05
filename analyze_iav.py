@@ -98,3 +98,17 @@ def print_summary(filtered_genes):
     print(f"Genes upregulated: {upregulated}")
     print(f"Genes downregulated: {downregulated}")
     print(f"Genes no significativos: {not_significant}")
+
+
+# Responsabilidad: Función principal que coordina: leer argumentos del usuario, definir umbrales,llamar load_deseq2_results(),llamar filter_genes(),llamar write_results(),llamar print_summary()
+# Entrada: file_path (ruta al archivo CSV), output_file_path (ruta al archivo de salida)
+# Salida: Ejecución del programa con resultados escritos en un archivo y resumen impreso en la consola.
+def main(filename, output_file_path):
+    genes = load_deseq2_results(filename)
+    filtered_genes = filter_genes(genes)
+    write_results(filtered_genes, output_file_path)
+    print_summary(filtered_genes)
+
+
+if __name__ == "__main__":
+    main()
