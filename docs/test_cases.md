@@ -119,3 +119,50 @@ El programa muestra un mensaje claro indicando que el archivo no existe.
 Criterio evaluado:
 El programa maneja errores de lectura del archivo de entrada.
 
+## Caso 8 (nueva funcionalidad): el usuario no proporciona valores para los thresholds como argumentos
+
+Entrada: 
+```text
+uv run python analyze_iav.py data/iav_deseq2_results.tsv results/iav_significant_genes.tsv
+```
+
+Resultado esperado:
+
+```text
+El programa corre sin problema pero usa como valores para los thresholds los que tiene indicados por default
+```
+
+Criterio evaluado:
+El programa corre correctamente con sus valores por default para los thresholds cuando no son proporcionados en la línea de comandos por el usuario
+
+## Caso 9 (nueva funcionalidad): el usuario proporciona valores para los thresholds como argumentos
+
+Entrada: 
+```text
+uv run python analyze_iav.py data/iav_deseq2_results.tsv results/iav_significant_genes.tsv --lfc_threshold 3.0 --padj_threshold 0.001
+```
+
+Resultado esperado:
+
+```text
+El programa corre sin problema usando como valores para los thresholds los que fueron indicados por el usuario
+```
+
+Criterio evaluado:
+El programa corre correctamente con los thresholds proporcionados en la línea de comandos por el usuario
+
+## Caso 10 (nueva funcionalidad): el usuario proporciona valores inválidos para los thresholds 
+
+Entrada: 
+```text
+uv run python analyze_iav.py data/iav_deseq2_results.tsv results/iav_significant_genes.tsv --lfc_threshold 0.0 --padj_threshold 1.0
+```
+
+Resultado esperado:
+
+```text
+El programa muestra un mensaje claro dejando saber cuál de los valores no fue adecuado y cuál sería un valor plausible para esa variable
+```
+
+Criterio evaluado:
+El programa no corre cuando los valores dados por el usuario no son adecuados para realizar el análisis
