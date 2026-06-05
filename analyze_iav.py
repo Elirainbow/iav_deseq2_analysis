@@ -82,3 +82,19 @@ def write_results(filtered_genes, output_file_path):
         for gene_id, log2FoldChange, padj, classification in filtered_genes:
             file.write(f"{gene_id}\t{log2FoldChange}\t{padj}\t{classification}\n")
     print(f"\nResultados escritos en '{output_file_path}' con éxito.")
+
+
+# Responsabilidad: Imprimir un resumen de los resultados, incluyendo el número total de genes analizados, el número de genes significativos y la distribución de las clasificaciones.
+# Entrada: Lista de genes filtrados con su clasificación
+# Salida: Resumen impreso en la consola.
+def print_summary(filtered_genes):
+    total_genes = len(filtered_genes)
+    upregulated = sum(1 for gene in filtered_genes if gene[3] == "upregulated")
+    downregulated = sum(1 for gene in filtered_genes if gene[3] == "downregulated")
+    not_significant = sum(1 for gene in filtered_genes if gene[3] == "not_significant")
+
+    print("\nResumen de resultados:")
+    print(f"Total de genes analizados: {total_genes}")
+    print(f"Genes upregulated: {upregulated}")
+    print(f"Genes downregulated: {downregulated}")
+    print(f"Genes no significativos: {not_significant}")
