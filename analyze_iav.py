@@ -22,13 +22,13 @@ def parse_arguments():
         help="Archivo TSV de salida para el resumen de genes (obligatorio)",
     )
     parser.add_argument(
-        "--padj",
+        "--p_adjusted",
         type=float,
         default=0.05,
         help="Umbral de padj para considerar un gen como diferencialmente expresado (default: 0.05)",
     )
     parser.add_argument(
-        "--FC",
+        "--Fold_Change",
         type=float,
         default=1.0,
         help="Umbral de log2FoldChange para considerar un gen como diferencialmente expresado (default: 1.0)",
@@ -48,9 +48,9 @@ def validate_arguments(args):
     """
     errors = []
 
-    if args.padj < 0 or args.padj > 1:
-        errors.append("Error: El umbral de padj debe estar entre 0 y 1.")
-    if args.FC < 0:
+    if args.p_adjusted < 0 or args.p_adjusted > 1:
+        errors.append("Error: El umbral de p_adjusted debe estar entre 0 y 1.")
+    if args.Fold_Change < 0:
         errors.append("Error: El umbral de log2FoldChange debe ser un valor positivo.")
 
     if errors:
@@ -205,7 +205,7 @@ def main():
     args = parse_arguments()
     validate_arguments(args)
     genes = load_deseq2_results(args.input)
-    filtered_genes = filter_genes(genes, args.FC, args.padj)
+    filtered_genes = filter_genes(genes, args.Fold_Change, args.p_adjusted)
     write_results(filtered_genes, args.output)
     print_summary(filtered_genes)
 
