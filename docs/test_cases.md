@@ -139,7 +139,7 @@ El programa corre correctamente con sus valores por default para los thresholds 
 
 Entrada: 
 ```text
-uv run python analyze_iav.py data/iav_deseq2_results.tsv results/iav_significant_genes.tsv --lfc_threshold 3.0 --padj_threshold 0.001
+uv run python analyze_iav.py data/iav_deseq2_results.tsv results/iav_significant_genes.tsv --Fold_Change 3.0 --p_adjusted 0.001
 ```
 
 Resultado esperado:
@@ -155,7 +155,7 @@ El programa corre correctamente con los thresholds proporcionados en la línea d
 
 Entrada: 
 ```text
-uv run python analyze_iav.py data/iav_deseq2_results.tsv results/iav_significant_genes.tsv --lfc_threshold 0.0 --padj_threshold 1.0
+uv run python analyze_iav.py data/iav_deseq2_results.tsv results/iav_significant_genes.tsv --Fold_Change 0.0 --p_adjusted 1.0
 ```
 
 Resultado esperado:

@@ -73,8 +73,8 @@ Si log2FoldChange < 0, el gen se clasificará como subexpresado.
 
 El programa ahora permite configurar los thresholds desde línea de comandos mediante:
 
-- `--lfc_threshold`
-- `--padj_threshold`
+- `--Fold_Change`
+- `--p_adjusted`
 
 Si el usuario no proporciona estos argumentos, el programa utiliza:
 

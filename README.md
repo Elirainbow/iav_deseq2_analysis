@@ -16,16 +16,16 @@ python analyze_iav.py \
     results/iav_significant_genes.tsv
 
 # Uso de thresholds opcionales 
---FC = valor positivo 
---padj = valor entre 0 y 1
+--Fold_Change = valor positivo 
+--p_adjusted = valor entre 0 y 1
 
 # Valores por defecto de los threshold
---FC = 1
---padj = 0.05
+--Fold_Change = 1
+--p_adjusted = 0.05
 
 ## Ejemplo:
 
-python analyze_iav.py data/iav_deseq2_results.tsv results/iav_significant_genes.tsv --FC 2.0 --padj 0.01
+python analyze_iav.py data/iav_deseq2_results.tsv results/iav_significant_genes.tsv --Fold_Change 2.0 --p_adjusted 0.01
 
 # Salida esperada
 gene    log2FoldChange  padj    status
