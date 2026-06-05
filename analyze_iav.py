@@ -1,10 +1,13 @@
 import argparse
 
 
-# Responsabilidad: guardar los argumentos de la línea de comandos en un objeto argpase para su uso posterior en el programa.
-# Entrada: Ninguna( los argumentos de la línea de comandos )
-# Salida: Objeto argparse con los argumentos de entrada y salida.
 def parse_arguments():
+    """
+    Guardar los argumentos de la línea de comandos en un objeto argparse.
+
+    Returns:
+        argparse.Namespace: Objeto argparse con los argumentos de entrada y salida.
+    """
     parser = argparse.ArgumentParser(
         description="Analiza los resultados de DESeq2 para identificar genes con expresión diferencial."
     )
@@ -21,24 +24,34 @@ def parse_arguments():
     return parser.parse_args()
 
 
-# Responsabilidad:Evaluar si los genes cumplen con los criterios de significancia para le filtrado
-# Entrada:log2FoldChange, padj, lfc_threshold, padj_threshold
-# Salida:True o False
 def is_significant(log2FoldChange, padj, log2fc_threshold, padj_threshold):
+    """
+    Evaluar si un gen cumple con los criterios de significancia para el filtrado.
+
+    Args:
+        log2FoldChange (float): Valor del cambio de expresión en escala logarítmica.
+        padj (float): Valor de p-valor ajustado.
+        log2fc_threshold (float): Umbral mínimo de log2FoldChange.
+        padj_threshold (float): Umbral máximo de p-valor ajustado.
+
+    Returns:
+        bool: True si el gen es significativo, False en caso contrario.
+    """
     if abs(log2FoldChange) >= log2fc_threshold and padj < padj_threshold:
         return True
     return False
 
 
-print(is_significant(4.2, 0.0001, 1, 0.05))
-print(is_significant(0.3, 0.0001, 1, 0.05))
-print(is_significant(3.0, 0.8, 1, 0.05))
-
-
-# Responsabilidad: Clasificar un gen como "upregulated", "downregulated" o "not_significant" según su log2FoldChange y padj.
-# Entrada: log2FoldChange
-# Salida:"upregulated" o "downregulated", "not_significant"
 def classify_gene(log2FoldChange):
+    """
+    Clasificar un gen según su log2FoldChange.
+
+    Args:
+        log2FoldChange (float): Valor del cambio de expresión en escala logarítmica.
+
+    Returns:
+        str: "upregulated" si log2FoldChange > 0, "downregulated" si < 0, o "not_significant" si = 0.
+    """
     if log2FoldChange > 0:
         return "upregulated"
     elif log2FoldChange < 0:
@@ -47,18 +60,16 @@ def classify_gene(log2FoldChange):
         return "not_significant"
 
 
-print(classify_gene(4.2))
-# "upregulated"
-
-print(classify_gene(-3.0))
-# "downregulated"
-
-
-# Responsabilidad: abrir el archivo, leer línea por línea, ignorar líneas vacías, ignorar encabezado, separar columnas, validar columnas suficientes, convertir valores numéricos, ignorar líneas inválidas.
-# Entrada: file_path (ruta al archivo CSV)
-# Salida: Lista de genes válidos.
-# load_deseq2_results()
 def load_deseq2_results(filename):
+    """
+    Cargar resultados de DESeq2 desde un archivo TSV.
+
+    Args:
+        filename (str): Ruta al archivo TSV con los resultados de DESeq2.
+
+    Returns:
+        list: Lista de tuplas (gene_id, log2FoldChange, padj) con los genes válidos.
+    """
     genes = []
     try:
         with open(filename, "r") as file:
@@ -84,10 +95,18 @@ def load_deseq2_results(filename):
     return genes
 
 
-# Responsabilidad: Filtrar genes significativos utilizando is_significant() y clasificar cada gen utilizando classify_gene().
-# Entrada: Lista de genes (gene_id, log2FoldChange, padj), umbrales de significancia
-# Salida: Lista de genes filtrados con su clasificación.
 def filter_genes(genes, log2fc_threshold, padj_threshold):
+    """
+    Filtrar genes significativos y clasificarlos.
+
+    Args:
+        genes (list): Lista de tuplas (gene_id, log2FoldChange, padj).
+        log2fc_threshold (float): Umbral mínimo de log2FoldChange.
+        padj_threshold (float): Umbral máximo de p-valor ajustado.
+
+    Returns:
+        list: Lista de tuplas (gene_id, log2FoldChange, padj, classification) con los genes filtrados.
+    """
     filtered_genes = []
     for gene_id, log2FoldChange, padj in genes:
         if is_significant(log2FoldChange, padj, log2fc_threshold, padj_threshold):
@@ -96,10 +115,17 @@ def filter_genes(genes, log2fc_threshold, padj_threshold):
     return filtered_genes
 
 
-# Responsabilidad: Escribir los resultados filtrados en un nuevo archivo TSV con encabezado.
-# Entrada: Lista de genes filtrados con su clasificación, output_file_path (ruta al archivo de salida)
-# Salida: Archivo TSV con los resultados filtrados.
 def write_results(filtered_genes, output_file_path):
+    """
+    Escribir los resultados filtrados en un archivo TSV.
+
+    Args:
+        filtered_genes (list): Lista de tuplas (gene_id, log2FoldChange, padj, classification).
+        output_file_path (str): Ruta del archivo TSV de salida.
+
+    Returns:
+        None
+    """
     with open(output_file_path, "w") as file:
         file.write("gene_id\tlog2FoldChange\tpadj\tclassification\n")
         for gene_id, log2FoldChange, padj, classification in filtered_genes:
@@ -107,10 +133,16 @@ def write_results(filtered_genes, output_file_path):
     print(f"\nResultados escritos en '{output_file_path}' con éxito.")
 
 
-# Responsabilidad: Imprimir un resumen de los resultados, incluyendo el número total de genes analizados, el número de genes significativos y la distribución de las clasificaciones.
-# Entrada: Lista de genes filtrados con su clasificación
-# Salida: Resumen impreso en la consola.
 def print_summary(filtered_genes):
+    """
+    Imprimir un resumen de los resultados del análisis.
+
+    Args:
+        filtered_genes (list): Lista de tuplas (gene_id, log2FoldChange, padj, classification).
+
+    Returns:
+        None
+    """
     total_genes = len(filtered_genes)
     upregulated = sum(1 for gene in filtered_genes if gene[3] == "upregulated")
     downregulated = sum(1 for gene in filtered_genes if gene[3] == "downregulated")
@@ -123,10 +155,16 @@ def print_summary(filtered_genes):
     print(f"Genes no significativos: {not_significant}")
 
 
-# Responsabilidad: Función principal que coordina: leer argumentos del usuario, definir umbrales,llamar load_deseq2_results(),llamar filter_genes(),llamar write_results(),llamar print_summary()
-# Entrada: file_path (ruta al archivo CSV), output_file_path (ruta al archivo de salida)
-# Salida: Ejecución del programa con resultados escritos en un archivo y resumen impreso en la consola.
 def main():
+    """
+    Función principal que coordina el análisis de genes con expresión diferencial.
+
+    Lee argumentos de la línea de comandos, carga resultados de DESeq2, filtra genes significativos,
+    escribe resultados en un archivo de salida e imprime un resumen.
+
+    Returns:
+        None
+    """
     # Definición de umbrales de significancia
     log2fc_threshold = 1
     padj_threshold = 0.05
