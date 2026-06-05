@@ -12,8 +12,8 @@ print(is_significant(0.3, 0.0001, 1, 0.05))
 print(is_significant(3.0, 0.8, 1, 0.05))
 
 
-# Responsabilidad: Clasificar un gen como "upregulated", "downregulated" o "not_significant" según su log2_fold_change y padj.
-# Entrada: log2_fold_change
+# Responsabilidad: Clasificar un gen como "upregulated", "downregulated" o "not_significant" según su log2FoldChange y padj.
+# Entrada: log2FoldChange
 # Salida:"upregulated" o "downregulated", "not_significant"
 def classify_gene(log2FoldChange):
     if log2FoldChange > 0:
@@ -29,3 +29,33 @@ print(classify_gene(4.2))
 
 print(classify_gene(-3.0))
 # "downregulated"
+
+
+# Responsabilidad: abrir el archivo, leer línea por línea, ignorar líneas vacías, ignorar encabezado, separar columnas, validar columnas suficientes, convertir valores numéricos, ignorar líneas inválidas.
+# Entrada: file_path (ruta al archivo CSV)
+# Salida: Lista de genes válidos.
+# load_deseq2_results()
+def load_deseq2_results(filename):
+    genes = []
+    try:
+        with open(filename, "r") as file:
+            header = file.readline().strip().split("\t")
+            for line in file:
+                line = line.strip()
+                if not line:
+                    continue
+                columns = line.split("\t")
+                if len(columns) < 6:
+                    continue
+                gene_id = columns[0]
+                try:
+                    log2FoldChange = float(columns[2])
+                    padj = float(columns[5])
+                    genes.append((gene_id, log2FoldChange, padj))
+                except ValueError:
+                    continue
+    except FileNotFoundError:
+        print(f"\nError: El archivo '{filename}' no existe.")
+        print("Por favor, introduce una ruta válida para el archivo de entrada.")
+        exit(1)
+    return genes
