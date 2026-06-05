@@ -71,3 +71,14 @@ def filter_genes(genes):
             classification = classify_gene(log2FoldChange)
             filtered_genes.append((gene_id, log2FoldChange, padj, classification))
     return filtered_genes
+
+
+# Responsabilidad: Escribir los resultados filtrados en un nuevo archivo TSV con encabezado.
+# Entrada: Lista de genes filtrados con su clasificación, output_file_path (ruta al archivo de salida)
+# Salida: Archivo TSV con los resultados filtrados.
+def write_results(filtered_genes, output_file_path):
+    with open(output_file_path, "w") as file:
+        file.write("gene_id\tlog2FoldChange\tpadj\tclassification\n")
+        for gene_id, log2FoldChange, padj, classification in filtered_genes:
+            file.write(f"{gene_id}\t{log2FoldChange}\t{padj}\t{classification}\n")
+    print(f"\nResultados escritos en '{output_file_path}' con éxito.")
