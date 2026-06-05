@@ -21,7 +21,43 @@ def parse_arguments():
         type=str,
         help="Archivo TSV de salida para el resumen de genes (obligatorio)",
     )
+    parser.add_argument(
+        "--padj",
+        type=float,
+        default=0.05,
+        help="Umbral de padj para considerar un gen como diferencialmente expresado (default: 0.05)",
+    )
+    parser.add_argument(
+        "--FC",
+        type=float,
+        default=1.0,
+        help="Umbral de log2FoldChange para considerar un gen como diferencialmente expresado (default: 1.0)",
+    )
     return parser.parse_args()
+
+
+def validate_arguments(args):
+    """
+    Validar los argumentos de la línea de comandos.
+
+    Args:
+        args (argparse.Namespace): Objeto argparse con los argumentos de entrada, salida y umbrales.
+
+    Returns:
+        None
+    """
+    errors = []
+
+    if args.padj < 0 or args.padj > 1:
+        errors.append("Error: El umbral de padj debe estar entre 0 y 1.")
+    if args.FC < 0:
+        errors.append("Error: El umbral de log2FoldChange debe ser un valor positivo.")
+
+    if errors:
+        print("\nErrores de validación:")
+        for error in errors:
+            print(f"  - {error}")
+        exit(1)
 
 
 def is_significant(log2FoldChange, padj, log2fc_threshold, padj_threshold):
@@ -165,13 +201,11 @@ def main():
     Returns:
         None
     """
-    # Definición de umbrales de significancia
-    log2fc_threshold = 1
-    padj_threshold = 0.05
 
     args = parse_arguments()
+    validate_arguments(args)
     genes = load_deseq2_results(args.input)
-    filtered_genes = filter_genes(genes, log2fc_threshold, padj_threshold)
+    filtered_genes = filter_genes(genes, args.FC, args.padj)
     write_results(filtered_genes, args.output)
     print_summary(filtered_genes)
 
